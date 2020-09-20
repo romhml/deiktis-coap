@@ -34,7 +34,7 @@ void lights_up(int index) {
     clear_leds();
 
     if (index >= 0) {
-        int led_index = (index > N_LED) ? N_LED - 1 : index;
+        int led_index = (index < N_LED) ? index : N_LED - 1;
 
         printf("Turning on the %s LED\n", LED_NAMES[led_index]);
         gpio_set_level(LEDS[led_index], 1);
