@@ -119,10 +119,20 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example CoAP Server Configuration
+# CoAP Server Configuration
 #
-CONFIG_EXAMPLE_COAP_PSK_KEY="secret-key"
-# end of Example CoAP Server Configuration
+CONFIG_COAP_PSK_KEY="secret-key"
+# end of CoAP Server Configuration
+
+#
+# Connection Configuration
+#
+CONFIG_CONNECT_WIFI=y
+# CONFIG_CONNECT_ETHERNET is not set
+CONFIG_WIFI_SSID="myssid"
+CONFIG_WIFI_PASSWORD="mypassword"
+CONFIG_CONNECT_IPV6=y
+# end of Connection Configuration
 
 #
 # Example Connection Configuration

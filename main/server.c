@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include <sys/socket.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -27,7 +26,7 @@
 
 #include "nvs_flash.h"
 
-#include "protocol_examples_common.h"
+#include "protocol_common.h"
 
 #if 1
 /* Needed until coap_dtls.h becomes a part of libcoap proper */
@@ -40,22 +39,22 @@
    'make menuconfig'.
 
    If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_COAP_PSK_KEY "some-agreed-preshared-key"
+   the config you want - ie #define COAP_PSK_KEY "some-agreed-preshared-key"
 
    Note: PSK will only be used if the URI is prefixed with coaps://
    instead of coap:// and the PSK must be one that the server supports
    (potentially associated with the IDENTITY)
 */
-#define EXAMPLE_COAP_PSK_KEY CONFIG_EXAMPLE_COAP_PSK_KEY
+#define COAP_PSK_KEY CONFIG_COAP_PSK_KEY
 
 /* The examples use CoAP Logging Level that
    you can set via 'make menuconfig'.
 
    If you'd rather not, just change the below entry to a value
    that is between 0 and 7 with
-   the config you want - ie #define EXAMPLE_COAP_LOG_DEFAULT_LEVEL 7
+   the config you want - ie #define COAP_LOG_DEFAULT_LEVEL 7
 */
-#define EXAMPLE_COAP_LOG_DEFAULT_LEVEL CONFIG_COAP_LOG_DEFAULT_LEVEL
+#define COAP_LOG_DEFAULT_LEVEL CONFIG_COAP_LOG_DEFAULT_LEVEL
 
 const static char *TAG = "CoAP_server";
 
@@ -163,7 +162,7 @@ verify_cn_callback(const char *cn,
 }
 #endif /* CONFIG_COAP_MBEDTLS_PKI */
 
-static void coap_example_server(void *p)
+static void coap_server(void *p)
 {
     coap_context_t *ctx = NULL;
     coap_address_t serv_addr;
@@ -171,7 +170,7 @@ static void coap_example_server(void *p)
 
     snprintf(espressif_data, sizeof(espressif_data), INITIAL_DATA);
     espressif_data_len = strlen(espressif_data);
-    coap_set_log_level(EXAMPLE_COAP_LOG_DEFAULT_LEVEL);
+    coap_set_log_level(COAP_LOG_DEFAULT_LEVEL);
 
     while (1) {
         coap_endpoint_t *ep = NULL;
@@ -191,8 +190,8 @@ static void coap_example_server(void *p)
 #ifdef CONFIG_COAP_MBEDTLS_PSK
         /* Need PSK setup before we set up endpoints */
         coap_context_set_psk(ctx, "CoAP",
-                             (const uint8_t *)EXAMPLE_COAP_PSK_KEY,
-                             sizeof(EXAMPLE_COAP_PSK_KEY) - 1);
+                             (const uint8_t *)COAP_PSK_KEY,
+                             sizeof(COAP_PSK_KEY) - 1);
 #endif /* CONFIG_COAP_MBEDTLS_PSK */
 
 #ifdef CONFIG_COAP_MBEDTLS_PKI
@@ -313,7 +312,7 @@ void app_main(void)
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
      */
-    ESP_ERROR_CHECK(example_connect());
+    ESP_ERROR_CHECK(network_connect());
 
-    xTaskCreate(coap_example_server, "coap", 8 * 1024, NULL, 5, NULL);
+    xTaskCreate(coap_server, "coap", 8 * 1024, NULL, 5, NULL);
 }
